@@ -163,29 +163,70 @@ document.querySelectorAll("[data-query]").forEach((button) => {
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRecognition) {
   const recognition = new SpeechRecognition();
-  recognition.lang = "es-BO";
+  // es-ES has broader browser support than regional variants such as es-BO.
+  recognition.lang = "es-ES";
+  recognition.continuous = false;
   recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  let recognitionActive = false;
+
+  const voiceErrorMessage = (code) => ({
+    "not-allowed": "Permite el acceso al micrófono en el navegador y vuelve a intentarlo.",
+    "service-not-allowed": "El navegador bloqueó el servicio de reconocimiento de voz. Prueba con Chrome, Edge o Brave.",
+    "audio-capture": "No se encontró un micrófono disponible. Revisa la conexión del dispositivo.",
+    "no-speech": "No detecté voz. Habla después de pulsar el botón e inténtalo nuevamente.",
+    network: "El reconocimiento de voz necesita conexión a Internet. Revisa la red e inténtalo nuevamente.",
+    "language-not-supported": "El navegador no admite reconocimiento en español. Prueba con Chrome, Edge o Brave.",
+  }[code] || "No se pudo reconocer la voz. También puedes escribir tu solicitud.");
+
+  const resetVoiceButton = () => {
+    recognitionActive = false;
+    voiceButton.classList.remove("listening");
+    voiceButton.disabled = false;
+    voiceButton.querySelector("span:last-child").textContent = "Hablar";
+  };
+
   voiceButton.addEventListener("click", () => {
+    if (recognitionActive) return;
+    clearError();
+    recognitionActive = true;
     voiceButton.classList.add("listening");
+    voiceButton.disabled = true;
     voiceButton.querySelector("span:last-child").textContent = "Escuchando…";
-    recognition.start();
+    document.querySelector("#voice-hint").textContent = "Habla ahora en español…";
+    try {
+      recognition.start();
+    } catch (error) {
+      resetVoiceButton();
+      document.querySelector("#voice-hint").textContent = "La entrada por voz funciona en navegadores compatibles con Web Speech API.";
+      showError(error.name === "InvalidStateError"
+        ? "El reconocimiento ya estaba activo. Espera un momento e inténtalo nuevamente."
+        : "No se pudo iniciar el micrófono. Revisa los permisos del navegador.");
+    }
+  });
+  recognition.addEventListener("start", () => {
+    document.querySelector("#voice-hint").textContent = "Escuchando… habla en español y luego espera la transcripción.";
   });
   recognition.addEventListener("result", (event) => {
-    queryInput.value = event.results[0][0].transcript;
+    const transcript = event.results[0][0].transcript.trim();
+    if (transcript) {
+      queryInput.value = transcript;
+      clearError();
+      document.querySelector("#voice-hint").textContent = "Consulta transcrita. Revisa el texto y pulsa Recomendar platos.";
+    }
   });
   recognition.addEventListener("end", () => {
-    voiceButton.classList.remove("listening");
-    voiceButton.querySelector("span:last-child").textContent = "Hablar";
+    resetVoiceButton();
   });
-  recognition.addEventListener("error", () => {
-    voiceButton.classList.remove("listening");
-    voiceButton.querySelector("span:last-child").textContent = "Hablar";
-    showError("No se pudo reconocer la voz. También puedes escribir tu solicitud.");
+  recognition.addEventListener("error", (event) => {
+    resetVoiceButton();
+    document.querySelector("#voice-hint").textContent = "La entrada por voz funciona en navegadores compatibles con Web Speech API.";
+    showError(voiceErrorMessage(event.error));
   });
 } else {
   voiceButton.disabled = true;
   voiceButton.title = "Este navegador no admite entrada por voz";
-  document.querySelector("#voice-hint").textContent = "Este navegador no admite Web Speech API; usa el campo de texto.";
+  document.querySelector("#voice-hint").textContent = "Este navegador no admite Web Speech API. Usa Chrome, Edge o Brave y permite el micrófono.";
 }
 
 loadHealth();

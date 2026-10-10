@@ -189,7 +189,7 @@ La demostración manual debe cubrir:
 2. **Caso difícil:** `Busco algo sin gluten con pollo, menor a Bs 50.`
 3. **Entrada inválida:** texto de un carácter o consulta vacía.
 4. **Caso sin coincidencia segura:** `Alergia a pescado y quiero salmón.`
-5. **Caso de voz:** usar el botón “Hablar” en un navegador compatible.
+5. **Caso de voz:** usar el botón “Hablar” en Chrome, Edge o Brave y permitir el micrófono.
 
 ## API
 
