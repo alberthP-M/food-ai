@@ -213,10 +213,15 @@ docs/
   build_reference_style_report_pdf.py  generador del informe PDF final
   presentacion_5_min.md guion de presentación individual
   dataset_card.md       ficha del dataset
-output/pdf/informe_tecnico_reference_style.pdf
+  screenshots/           evidencia visual del flujo real
+output/pdf/informe_tecnico_final.pdf
 output/presentation/presentacion_5_min_reference_style.pptx
 docker-compose.yml
 ```
+
+El informe PDF final incluye capturas obtenidas ejecutando el frontend conectado al
+backend real: caso válido, consulta difícil, caso sin coincidencias seguras y
+entrada inválida.
 
 ## Limitaciones y alcance
 

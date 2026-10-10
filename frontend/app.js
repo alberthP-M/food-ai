@@ -41,6 +41,16 @@ function clearError() {
   errorBox.classList.add("hidden");
 }
 
+function clearResults() {
+  resultsGrid.innerHTML = "";
+  resultsTitle.textContent = "Tus recomendaciones aparecerán aquí";
+  resultMessage.textContent = "";
+  resultMessage.classList.add("hidden");
+  constraintsCard.classList.add("hidden");
+  safetyNotice.textContent = "";
+  safetyNotice.classList.add("hidden");
+}
+
 function showConstraints(constraints) {
   const values = [];
   for (const key of ["diets", "excluded_allergens"]) {
@@ -98,6 +108,7 @@ async function recommend() {
   const query = queryInput.value.trim();
   clearError();
   if (query.length < 3) {
+    clearResults();
     showError("Escribe una solicitud de al menos tres caracteres.");
     return;
   }
@@ -123,6 +134,7 @@ async function recommend() {
       resultMessage.classList.remove("hidden");
     }
   } catch (error) {
+    clearResults();
     resultsTitle.textContent = "No se pudo completar la búsqueda";
     showError(error.message);
   } finally {

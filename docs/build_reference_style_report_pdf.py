@@ -20,6 +20,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     Flowable,
     HRFlowable,
+    Image,
     KeepTogether,
     PageBreak,
     Paragraph,
@@ -31,9 +32,10 @@ from reportlab.platypus import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "output" / "pdf" / "informe_tecnico_reference_style.pdf"
+OUTPUT = ROOT / "output" / "pdf" / "informe_tecnico_final.pdf"
 EVALUATION = ROOT / "backend" / "artifacts" / "evaluation.json"
 WEIGHTS = ROOT / "backend" / "artifacts" / "weight_search.json"
+SCREENSHOTS = ROOT / "docs" / "screenshots"
 
 NAVY = colors.HexColor("#202638")
 CYAN = colors.HexColor("#16B8E5")
@@ -174,6 +176,27 @@ def card(text: str, style: ParagraphStyle, background=PALE_CYAN, border=CYAN):
         ("TOPPADDING", (0, 0), (-1, -1), 8),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
     ]))
+
+
+def evidence_pages(styles: dict[str, ParagraphStyle]) -> list:
+    cases = [
+        ("01 · Caso válido", "01-caso-valido.png", 1560 / 1440),
+        ("02 · Caso difícil", "02-caso-dificil.png", 1578 / 1440),
+        ("03 · Caso de seguridad", "03-caso-seguridad.png", 1270 / 1440),
+        ("04 · Entrada inválida", "04-entrada-invalida.png", 1153 / 1440),
+    ]
+    story = []
+    for index, (label, filename, aspect_ratio) in enumerate(cases):
+        path = SCREENSHOTS / filename
+        if not path.exists():
+            raise FileNotFoundError(f"Missing screenshot: {path}")
+        story.append(Paragraph(label, styles["screenshot_caption"]))
+        image = Image(str(path), width=170 * mm, height=170 * mm * aspect_ratio)
+        image.hAlign = "CENTER"
+        story.append(image)
+        if index < len(cases) - 1:
+            story.append(PageBreak())
+    return story
 
 
 def bullet(text: str, styles: dict[str, ParagraphStyle]) -> Paragraph:
@@ -340,6 +363,10 @@ def build() -> None:
         name="metric_label", parent=styles["BodyText"], fontName="Arial-Bold", fontSize=7.2,
         leading=9, textColor=PURPLE, alignment=TA_CENTER,
     ))
+    styles.add(ParagraphStyle(
+        name="screenshot_caption", parent=styles["BodyText"], fontName="Arial-Bold", fontSize=8.5,
+        leading=10, textColor=PURPLE, alignment=TA_CENTER, spaceAfter=2,
+    ))
 
     doc = SimpleDocTemplate(
         str(OUTPUT), pagesize=A4, rightMargin=15 * mm, leftMargin=15 * mm,
@@ -461,14 +488,19 @@ def build() -> None:
     story += [table(demo, [27 * mm, 77 * mm, 76 * mm], styles, compact=True)]
     story += [Spacer(1, 3 * mm), card("<font color='#16B8E5'>DÓNDE ACTÚA LA IA</font><br/>La IA actúa en la interpretación semántica de la frase y en el cálculo de similitud entre la consulta y los platos. Los filtros de alergias, disponibilidad y validación son reglas deterministas para mantener trazabilidad y seguridad.", styles["callout"], PALE_CYAN, CYAN)]
 
-    story += section_title("09", "Pruebas y ejecución", styles)
+    story += section_title("09", "Evidencia visual del flujo", styles)
+    story += [p("Las capturas se obtuvieron ejecutando el frontend conectado al backend real con Docker. Muestran el estado listo del modelo, la interpretación de restricciones, el resultado útil, el bloqueo de una contradicción de alergia y el manejo de una entrada inválida.", styles["body"])]
+    story += evidence_pages(styles)
+    story += [PageBreak()]
+
+    story += section_title("10", "Pruebas y ejecución", styles)
     story += [p("La suite automática cubre extracción de restricciones, filtros de seguridad, ausencia de candidatos, comparación con línea base, health check, recomendaciones válidas e inputs inválidos. La última ejecución produjo 12 pruebas exitosas.", styles["body"])]
     story += [p("Comandos reproducibles:", styles["report_h3"])]
     story += [p("docker compose up --build<br/>Abrir http://localhost:8080<br/>API Swagger: http://localhost:8000/docs<br/>Pruebas: cd backend && MODEL_BACKEND=tfidf pytest -q", styles["mono"])]
     story += [p("La primera ejecución necesita conexión a Internet para descargar el modelo preentrenado. Después, el volumen model_cache conserva la caché del encoder.", styles["body"])]
     story += [PageBreak()]
 
-    story += section_title("10", "Limitaciones y trabajo futuro", styles)
+    story += section_title("11", "Limitaciones y trabajo futuro", styles)
     for item in [
         "El dataset es sintético y las consultas todavía no representan toda la diversidad de clientes reales.",
         "La línea base supera al modelo en la prueba actual; se debe mejorar la cobertura semántica y la anotación.",
@@ -478,7 +510,7 @@ def build() -> None:
     ]:
         story.append(bullet(item, styles))
 
-    story += section_title("11", "Conclusión", styles)
+    story += section_title("12", "Conclusión", styles)
     story += [p("La entrega demuestra un flujo completo de Machine Learning aplicado a un sistema de comidas: dataset reproducible, preparación, embeddings, filtros de seguridad, ranking híbrido, línea base, evaluación separada, API, frontend, pruebas y Docker.", styles["body"])]
     story += [card("<font color='#7D55E8'>MENSAJE FINAL</font><br/>El producto no intenta adivinar una dieta médica: convierte una intención cotidiana en una búsqueda de menú segura, explicable y lista para integrarse en los canales del restaurante.", styles["callout"], PALE_PURPLE, PURPLE)]
 
@@ -490,7 +522,7 @@ def build() -> None:
         ["Aplicación", "backend/app/main.py; frontend/index.html; frontend/app.js; docker-compose.yml"],
         ["Modelo preentrenado", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 mediante FastEmbed."],
     ]
-    story += [KeepTogether(section_title("12", "Referencias y artefactos", styles) + [table(refs, [43 * mm, 137 * mm], styles, compact=True)])]
+    story += [KeepTogether(section_title("13", "Referencias y artefactos", styles) + [table(refs, [43 * mm, 137 * mm], styles, compact=True)])]
 
     doc.build(story, onFirstPage=draw_decorations, onLaterPages=draw_decorations)
     print(OUTPUT)
