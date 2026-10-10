@@ -1,5 +1,8 @@
 # Guion de presentación individual: 5 minutos
 
+**Autor:** Alberto Orlando Paredes Mamani  
+**Repositorio:** https://github.com/alberthP-M/food-ai
+
 ## Diapositiva 1 — Problema y solución (45 segundos)
 
 Los clientes deben navegar manualmente por menús digitales y les cuesta encontrar platos compatibles con sus preferencias o alergias. La solución recibe texto o voz y recomienda tres platos disponibles.

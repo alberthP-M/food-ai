@@ -36,6 +36,8 @@ OUTPUT = ROOT / "output" / "pdf" / "informe_tecnico_final.pdf"
 EVALUATION = ROOT / "backend" / "artifacts" / "evaluation.json"
 WEIGHTS = ROOT / "backend" / "artifacts" / "weight_search.json"
 SCREENSHOTS = ROOT / "docs" / "screenshots"
+AUTHOR = "Alberto Orlando Paredes Mamani"
+REPO_URL = "https://github.com/alberthP-M/food-ai"
 
 NAVY = colors.HexColor("#202638")
 CYAN = colors.HexColor("#16B8E5")
@@ -316,6 +318,14 @@ def build() -> None:
         leading=17, textColor=MUTED, spaceAfter=12,
     ))
     styles.add(ParagraphStyle(
+        name="cover_author", parent=styles["Normal"], fontName="Arial-Bold", fontSize=10.5,
+        leading=14, textColor=NAVY, spaceAfter=2,
+    ))
+    styles.add(ParagraphStyle(
+        name="cover_repo", parent=styles["Normal"], fontName="Arial", fontSize=8.5,
+        leading=11, textColor=PURPLE, spaceAfter=8,
+    ))
+    styles.add(ParagraphStyle(
         name="section_kicker", parent=styles["Normal"], fontName="Arial-Bold", fontSize=8.2,
         leading=10, textColor=PURPLE, spaceBefore=4, spaceAfter=1,
     ))
@@ -371,7 +381,7 @@ def build() -> None:
     doc = SimpleDocTemplate(
         str(OUTPUT), pagesize=A4, rightMargin=15 * mm, leftMargin=15 * mm,
         topMargin=18 * mm, bottomMargin=20 * mm, title="Informe técnico - Food AI Recommender",
-        author="Proyecto de Maestría",
+        author=AUTHOR,
     )
     story = []
 
@@ -379,6 +389,8 @@ def build() -> None:
     story += [Spacer(1, 22 * mm), Paragraph("PROYECTO FINAL · MACHINE LEARNING", styles["cover_kicker"])]
     story += [Paragraph("Food AI<br/>Recommender", styles["cover_title"])]
     story += [Paragraph("Recomendación semántica de platos según preferencias, restricciones y lenguaje natural.", styles["cover_subtitle"])]
+    story += [Paragraph(AUTHOR, styles["cover_author"])]
+    story += [Paragraph(f'Repositorio: <link href="{REPO_URL}">{REPO_URL}</link>', styles["cover_repo"])]
     story += [HRFlowable(width="100%", thickness=1.2, color=NAVY, spaceBefore=3, spaceAfter=12)]
     story += [Paragraph("Una implementación funcional para web, kiosko y aplicación de meseros: recibe una frase, aplica seguridad determinista y entrega un top-3 explicable.", styles["body"])]
     story += [Spacer(1, 7 * mm)]

@@ -1,5 +1,8 @@
 # Informe técnico
 
+**Autor:** Alberto Orlando Paredes Mamani  
+**Repositorio:** https://github.com/alberthP-M/food-ai
+
 ## 1. Problema y objetivo
 
 Los menús digitales tradicionales obligan al cliente a navegar por categorías, leer descripciones y aplicar filtros manuales. Esta experiencia es lenta cuando el cliente tiene restricciones dietéticas, alergias, preferencias de sabor o un presupuesto concreto.

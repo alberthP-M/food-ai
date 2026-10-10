@@ -4,6 +4,59 @@ Sistema funcional de búsqueda y recomendación de platos para un POS de restaur
 
 El proyecto está pensado como entrega final de Machine Learning. Incluye dataset sintético reproducible, ajuste de pesos con validación, modelo de embeddings, línea base, evaluación, API, frontend, pruebas, Docker e informe técnico.
 
+## Repositorio
+
+Código fuente y entregables:
+
+<https://github.com/alberthP-M/food-ai>
+
+## Inicio rápido en otra PC
+
+La forma recomendada de ejecutar el sistema es con Docker. No es necesario instalar
+Python, Node.js ni las dependencias del modelo.
+
+### Requisitos
+
+- Git.
+- Docker Desktop abierto y funcionando.
+- Conexión a Internet durante el primer arranque para descargar el modelo.
+
+### Instalación y ejecución
+
+En una terminal, ejecuta:
+
+```bash
+git clone https://github.com/alberthP-M/food-ai.git
+cd food-ai
+docker compose up --build -d
+```
+
+Espera a que el backend termine de cargar el modelo y verifica su estado:
+
+```bash
+docker compose ps
+curl http://localhost:8000/api/ready
+```
+
+La respuesta debe incluir `"status":"ready"`. Después abre:
+
+- Aplicación: <http://localhost:8080>
+- Documentación de la API: <http://localhost:8000/docs>
+- Estado del backend: <http://localhost:8000/api/health>
+
+El primer arranque puede tardar porque descarga el modelo multilingüe. En los
+siguientes arranques Docker reutiliza la caché.
+
+### Detener o reiniciar
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+Si Docker informa que los puertos `8080` o `8000` ya están ocupados, libera esos
+puertos o modifica la sección `ports` de `docker-compose.yml`.
+
 ## Objetivo
 
 Resolver la tarea:
@@ -100,28 +153,6 @@ El dataset incluido es sintético y reproducible porque el restaurante todavía 
 
 El dataset sintético sirve para demostrar el flujo funcional, pero no representa el comportamiento definitivo de clientes reales. La siguiente versión debe sustituir o ampliar las consultas con interacciones reales, con autorización y sin datos personales innecesarios.
 
-## Ejecución con Docker
-
-Requisitos:
-
-- Docker.
-- Docker Compose.
-- Conexión a Internet durante el primer arranque para descargar el modelo preentrenado.
-
-Desde esta carpeta:
-
-```bash
-docker compose up --build
-```
-
-Abrir:
-
-- Frontend: <http://localhost:8080>
-- API Swagger: <http://localhost:8000/docs>
-- Health check: <http://localhost:8000/api/health>
-
-El primer arranque puede tardar porque descarga el modelo multilingüe. La caché queda persistida en el volumen `model_cache`.
-
 ## Ejecución local
 
 ```bash
@@ -215,7 +246,7 @@ docs/
   dataset_card.md       ficha del dataset
   screenshots/           evidencia visual del flujo real
 output/pdf/informe_tecnico_final.pdf
-output/presentation/presentacion_5_min_reference_style.pptx
+output/presentation/presentacion_5_min_final.pptx
 docker-compose.yml
 ```
 
