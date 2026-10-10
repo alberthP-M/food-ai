@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menú inteligente | Food AI</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Food AI · demostración académica</p>
+          <h1>Encuentra un plato que encaje contigo</h1>
+          <p class="hero-copy">
+            Escribe o habla con el asistente. La IA interpreta tu solicitud, respeta tus
+            restricciones y ordena las mejores opciones del menú.
+          </p>
+        </div>
+        <div class="status-pill" id="service-status">Comprobando servicio…</div>
+      </section>
+
+      <section class="search-card" aria-labelledby="search-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Búsqueda semántica</p>
+            <h2 id="search-title">¿Qué te gustaría comer?</h2>
+          </div>
+          <span class="model-badge">Embeddings · Precision@3</span>
+        </div>
+
+        <div class="input-row">
+          <textarea
+            id="query"
+            rows="3"
+            maxlength="500"
+            placeholder="Ejemplo: quiero algo vegetariano, sin lactosa, poco picante y menor a Bs 50"
+          ></textarea>
+          <button class="voice-button" id="voice-button" type="button" title="Dictar consulta">
+            <span aria-hidden="true">🎙</span>
+            <span>Hablar</span>
+          </button>
+        </div>
+
+        <div class="quick-prompts" aria-label="Consultas de ejemplo">
+          <button type="button" data-query="Quiero algo vegetariano, sin lactosa y poco picante">Vegetariano y sin lactosa</button>
+          <button type="button" data-query="Busco algo sin gluten con pollo y menor a Bs 50">Sin gluten con pollo</button>
+          <button type="button" data-query="Quiero algo vegano y bajo en calorías">Vegano y liviano</button>
+        </div>
+
+        <div class="actions-row">
+          <label class="channel-label" for="channel">Canal</label>
+          <select id="channel">
+            <option value="kiosk">Kiosko</option>
+            <option value="web" selected>Página de pedidos</option>
+            <option value="waiter">Aplicación de mesero</option>
+          </select>
+          <button class="primary-button" id="recommend-button" type="button">Recomendar platos</button>
+        </div>
+
+        <p class="hint" id="voice-hint">La entrada por voz funciona en navegadores compatibles con Web Speech API.</p>
+        <div class="error-box hidden" id="error-box" role="alert"></div>
+      </section>
+
+      <section class="constraints-card hidden" id="constraints-card">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Interpretación de la IA</p>
+            <h2>Condiciones detectadas</h2>
+          </div>
+        </div>
+        <div class="constraint-list" id="constraint-list"></div>
+      </section>
+
+      <section class="results-section" aria-live="polite">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Resultados</p>
+            <h2 id="results-title">Tus recomendaciones aparecerán aquí</h2>
+          </div>
+          <div class="loading hidden" id="loading">Analizando…</div>
+        </div>
+        <p class="result-message hidden" id="result-message"></p>
+        <div class="results-grid" id="results-grid"></div>
+        <p class="safety-notice hidden" id="safety-notice"></p>
+      </section>
+
+      <section class="limitations-card">
+        <h2>Uso responsable</h2>
+        <p>
+          Las alergias y la disponibilidad se validan con los datos estructurados del restaurante.
+          La IA ordena platos compatibles, pero no sustituye la confirmación del personal ante una
+          alergia severa. Revisa el pedido antes de confirmarlo.
+        </p>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

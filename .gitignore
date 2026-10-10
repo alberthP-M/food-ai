@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+backend/artifacts/*
+!backend/artifacts/.gitkeep
+!backend/artifacts/evaluation.json
+!backend/artifacts/index_metadata.json
+!backend/artifacts/menu_embeddings.npy
+backend/data/feedback.jsonl
+node_modules/
+dist/
+.DS_Store
+
+# Local build and review artifacts
+.archive/
+.pptx-build/
+.codex-finalizer/
+.chart-data-*/
